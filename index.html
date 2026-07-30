@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>استبيان ما قبل ملتقى الاحتراف المؤسسي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F2A3F;        /* deep teal-navy */
+    --ink-2:#153a55;
+    --gold:#C8992E;       /* muted bronze accent */
+    --gold-soft:#f3e6c4;
+    --paper:#F5F6F4;
+    --card:#ffffff;
+    --line:#e4e7e6;
+    --text:#1B2A33;
+    --muted:#6B7B84;
+    --ok:#1f7a52;
+    --err:#b23b3b;
+    --shadow:0 10px 30px rgba(15,42,63,.08);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper);
+    color:var(--text);
+    font-family:"Tajawal",system-ui,sans-serif;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 18px 64px}
+
+  /* ---- header ---- */
+  .hero{
+    background:linear-gradient(160deg,var(--ink) 0%,var(--ink-2) 100%);
+    color:#fff;
+    padding:52px 18px 40px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";position:absolute;inset:auto 0 0 0;height:4px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  }
+  .eyebrow{
+    font-family:"Cairo",sans-serif;font-weight:700;letter-spacing:.12em;
+    font-size:12px;color:var(--gold);text-transform:uppercase;margin:0 0 14px;
+  }
+  .hero h1{
+    font-family:"Cairo",sans-serif;font-weight:800;
+    font-size:clamp(24px,5vw,36px);margin:0 auto 16px;max-width:600px;line-height:1.35;
+  }
+  .hero p{
+    margin:0 auto;max-width:560px;font-size:15.5px;color:#d7e2ea;font-weight:400;
+  }
+
+  /* ---- intro card ---- */
+  .intro{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    box-shadow:var(--shadow);margin:-26px auto 30px;padding:24px 26px;
+    position:relative;z-index:2;font-size:15px;color:#2c3d47;
+  }
+  .intro strong{color:var(--ink)}
+
+  /* ---- questions ---- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    box-shadow:var(--shadow);padding:22px 24px;margin-bottom:16px;
+    display:flex;gap:16px;align-items:flex-start;
+  }
+  .num{
+    flex:0 0 auto;font-family:"Cairo",sans-serif;font-weight:800;font-size:18px;
+    color:var(--gold);width:38px;height:38px;border-radius:10px;
+    background:var(--gold-soft);display:grid;place-items:center;margin-top:2px;
+  }
+  .q-body{flex:1;min-width:0}
+  .q label{display:block;font-weight:700;color:var(--ink);font-size:16.5px;margin-bottom:12px}
+  .q textarea{
+    width:100%;border:1.5px solid var(--line);border-radius:10px;
+    background:#fbfcfb;padding:12px 14px;font-family:inherit;font-size:15px;
+    color:var(--text);resize:vertical;min-height:64px;transition:border-color .15s,box-shadow .15s;
+  }
+  .q textarea:focus{
+    outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,153,46,.15);background:#fff;
+  }
+  .q.tall textarea{min-height:120px}
+
+  /* ---- confidentiality ---- */
+  .note{
+    border-right:4px solid var(--gold);background:#fbf7ec;border-radius:10px;
+    padding:16px 18px;margin:26px 0 24px;font-size:14px;color:#5a5230;
+  }
+
+  /* ---- submit ---- */
+  .actions{text-align:center;margin-top:26px}
+  .send{
+    font-family:"Cairo",sans-serif;font-weight:700;font-size:17px;color:#fff;
+    background:var(--ink);border:none;border-radius:12px;padding:15px 46px;cursor:pointer;
+    box-shadow:0 8px 20px rgba(15,42,63,.22);transition:transform .12s,background .2s;
+  }
+  .send:hover{background:var(--ink-2);transform:translateY(-1px)}
+  .send:active{transform:translateY(0)}
+  .send:disabled{opacity:.6;cursor:default;transform:none}
+  .hint{color:var(--muted);font-size:13px;margin-top:14px}
+  .msg{margin-top:16px;font-size:14.5px;font-weight:500;display:none}
+  .msg.err{color:var(--err);display:block}
+
+  /* ---- thank-you screen ---- */
+  .done{
+    display:none;text-align:center;background:var(--card);border:1px solid var(--line);
+    border-radius:18px;box-shadow:var(--shadow);padding:48px 28px;margin-top:26px;
+  }
+  .done.show{display:block;animation:rise .4s ease both}
+  .check{
+    width:66px;height:66px;border-radius:50%;background:var(--ok);margin:0 auto 20px;
+    display:grid;place-items:center;
+  }
+  .check svg{width:32px;height:32px}
+  .done h2{font-family:"Cairo",sans-serif;color:var(--ink);margin:0 0 10px;font-size:24px}
+  .done p{color:var(--muted);margin:0 auto;max-width:420px;font-size:15px}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  .foot{text-align:center;color:var(--muted);font-size:12.5px;margin-top:34px}
+
+  @media (max-width:520px){
+    .q{padding:18px 16px;gap:12px}
+    .intro{padding:20px}
+    .num{width:32px;height:32px;font-size:16px}
+  }
+</style>
+</head>
+<body>
+
+  <header class="hero">
+    <p class="eyebrow">فريق النجاح</p>
+    <h1>استبيان ما قبل ملتقى الاحتراف المؤسسي</h1>
+    <p>لأننا نؤمن بأن بناء المرحلة القادمة يبدأ بالاستماع إليكم، نرجو تخصيص بضع دقائق للإجابة بكل شفافية.</p>
+  </header>
+
+  <div class="wrap">
+
+    <div class="intro">
+      لا توجد إجابات صحيحة أو خاطئة، فكل رأي يمثل قيمة بالنسبة لنا، وسيساعدنا على جعل الملتقى أكثر فائدة وتأثيرًا.
+      <strong>رأيك مسموع، ومشاركتك جزء من نجاح المرحلة القادمة.</strong>
+    </div>
+
+    <form id="surveyForm" novalidate>
+
+      <div class="q">
+        <div class="num">1</div>
+        <div class="q-body">
+          <label for="q1">ما الذي تتوقع أن يتم الإعلان عنه في هذا الاجتماع؟</label>
+          <textarea id="q1" name="١. المتوقع الإعلان عنه"></textarea>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="num">2</div>
+        <div class="q-body">
+          <label for="q2">ما أكثر موضوع تتمنى أن يتم مناقشته؟</label>
+          <textarea id="q2" name="٢. الموضوع الأكثر رغبة في مناقشته"></textarea>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="num">3</div>
+        <div class="q-body">
+          <label for="q3">ما أكبر تحدٍ تواجهه في عملك اليوم؟</label>
+          <textarea id="q3" name="٣. أكبر تحدٍ في العمل"></textarea>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="num">4</div>
+        <div class="q-body">
+          <label for="q4">إذا أتيحت لك الفرصة لتغيير شيء واحد داخل المجموعة، فما هو؟</label>
+          <textarea id="q4" name="٤. شيء واحد تود تغييره"></textarea>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="num">5</div>
+        <div class="q-body">
+          <label for="q5">ما الذي يجعلك أكثر حماسًا للاستمرار والنمو داخل هذا الكيان؟</label>
+          <textarea id="q5" name="٥. ما يزيد الحماس للاستمرار والنمو"></textarea>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="num">6</div>
+        <div class="q-body">
+          <label for="q6">ما الذي تعتقد أنه يمنع الفريق من الوصول إلى أفضل أداء؟</label>
+          <textarea id="q6" name="٦. ما يمنع الفريق من أفضل أداء"></textarea>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="num">7</div>
+        <div class="q-body">
+          <label for="q7">هل ترى أن التعاون بين الإدارات يحتاج إلى تطوير؟ وكيف؟</label>
+          <textarea id="q7" name="٧. تطوير التعاون بين الإدارات"></textarea>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="num">8</div>
+        <div class="q-body">
+          <label for="q8">ما الذي تتمنى أن تسمعه من رئيس مجلس الإدارة في هذا اللقاء؟</label>
+          <textarea id="q8" name="٨. ما تتمنى سماعه من رئيس مجلس الإدارة"></textarea>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="num">9</div>
+        <div class="q-body">
+          <label for="q9">ما الذي تتمنى أن يخرج به الفريق بعد انتهاء الاجتماع؟</label>
+          <textarea id="q9" name="٩. ما تتمنى أن يخرج به الفريق"></textarea>
+        </div>
+      </div>
+
+      <div class="q tall">
+        <div class="num">10</div>
+        <div class="q-body">
+          <label for="q10">إذا كان لديك أي رسالة أو اقتراح أو فكرة تود إيصالها قبل الاجتماع، فاكتبها هنا.</label>
+          <textarea id="q10" name="١٠. رسالة أو اقتراح أو فكرة"></textarea>
+        </div>
+      </div>
+
+      <div class="note">
+        ستُستخدم نتائج هذا الاستبيان لتحسين محتوى ملتقى الاحتراف المؤسسي، وسيتم التعامل مع جميع الإجابات بسرية واحترام،
+        ولن تُنسب أي إجابة إلى صاحبها عند مناقشة النتائج.
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="send" id="sendBtn">إرسال الاستبيان</button>
+        <div class="hint">شكرًا لك — نقدّر وقتك ومشاركتك في بناء مرحلة أكثر احترافية.</div>
+        <div class="msg" id="msg"></div>
+      </div>
+    </form>
+
+    <div class="done" id="done">
+      <div class="check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <h2>تم استلام إجاباتك بنجاح</h2>
+      <p>شكرًا لمشاركتك. رأيك وصل، وسيكون جزءًا من بناء المرحلة القادمة.</p>
+    </div>
+
+    <p class="foot">ملتقى الاحتراف المؤسسي — فريق النجاح</p>
+  </div>
+
+<script>
+  // ==========================================================
+  //  الإعدادات — عدّل هنا فقط
+  // ==========================================================
+  const TARGET_EMAIL = "Anm4460@gmail.com";  // الإيميل اللي هيوصله الرد
+  const ACCESS_KEY    = "0ad63a03-93c9-43da-af3b-683e99a82203";  // مفتاح Web3Forms — إرسال مباشر للجيميل
+  // ==========================================================
+
+  const form  = document.getElementById('surveyForm');
+  const btn   = document.getElementById('sendBtn');
+  const msg   = document.getElementById('msg');
+  const done  = document.getElementById('done');
+
+  function collect(){
+    const fields = form.querySelectorAll('textarea');
+    const data = {};
+    let filled = 0;
+    fields.forEach(t=>{
+      const val = t.value.trim();
+      data[t.name] = val;
+      if(val) filled++;
+    });
+    return {data, filled};
+  }
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    msg.className = 'msg';
+    const {data, filled} = collect();
+
+    if(filled === 0){
+      msg.textContent = 'من فضلك أجب على سؤال واحد على الأقل قبل الإرسال.';
+      msg.className = 'msg err';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'جارٍ الإرسال…';
+
+    // الطريقة (أ): إرسال مباشر عبر Web3Forms لو المفتاح موجود
+    if(ACCESS_KEY){
+      try{
+        const payload = {
+          access_key: ACCESS_KEY,
+          subject: 'استبيان ما قبل ملتقى الاحتراف المؤسسي — رد جديد',
+          from_name: 'استبيان فريق النجاح',
+          ...data
+        };
+        const res = await fetch('https://api.web3forms.com/submit',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Accept':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        const out = await res.json();
+        if(out.success){ showDone(); return; }
+        throw new Error(out.message || 'فشل الإرسال');
+      }catch(err){
+        btn.disabled = false;
+        btn.textContent = 'إرسال الاستبيان';
+        msg.textContent = 'تعذّر الإرسال المباشر. تأكد من الاتصال بالإنترنت وحاول مرة أخرى.';
+        msg.className = 'msg err';
+        return;
+      }
+    }
+
+    // الطريقة (ب): بدون مفتاح — يفتح تطبيق البريد جاهز للإرسال
+    let body = 'استبيان ما قبل ملتقى الاحتراف المؤسسي\n\n';
+    Object.keys(data).forEach(k=>{
+      body += k + '\n' + (data[k] || '—') + '\n\n';
+    });
+    const link = 'mailto:' + TARGET_EMAIL
+      + '?subject=' + encodeURIComponent('استبيان ما قبل ملتقى الاحتراف المؤسسي — رد جديد')
+      + '&body=' + encodeURIComponent(body);
+    window.location.href = link;
+
+    setTimeout(()=>{ showDone(); }, 800);
+  });
+
+  function showDone(){
+    form.style.display = 'none';
+    done.classList.add('show');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+</script>
+</body>
+</html>
